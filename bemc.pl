@@ -68,25 +68,49 @@ foreach $arg(@ARGV) {
 
         # if we need to delete file, it has - inside
 	if ($arg =~ /-\w+/)
-	{
+	{ 
 	   $arg =~ s/^-//;
-	   `rm -rf  $current_folder/$filename_base.$arg`;
+	   my $ext = $arg =~ /^ie/ ? "$arg.css" : "$arg";
+	   `rm -rf  $current_folder/$filename_base.$ext`;
+	   print "deleting $current_folder/$filename_base.$ext\n";
 	}
 
-        # xsl file
-        elsif ($arg == "xsl")
+        else 
 	{
-	    open I, "<tpl/xsl.tpl";
+	    my $filename = $current_folder . "/" . $filename_base;
+	    my $replacement;
 
-	    my $filename = $current_folder . "/" . $filename_base . ".xsl";
-	    my $block_replacement = "lego:" . $b . ($e ? "/lego:$e" : "") . ($#m > 0 ? "[\@$m[0]='$m[1]']" : "");
-            
-	    if (!-e $filename)
+            # xsl file
+	    if ($arg eq "xsl")
+	    {
+	        open I, "<tpl/xsl.tpl";
+
+	        $filename .= ".xsl";
+	        $replacement = "lego:" . $b . ($e ? "/lego:$e" : "") . ($#m > 0 ? "[\@$m[0]='$m[1]']" : "");
+	    }
+
+	    # js file
+	    elsif ($arg eq "js")
+	    {
+	        open I, "<tpl/js.tpl";
+	        $filename .= ".js";
+		$replacement = $filename_base;
+	    }
+
+	    # css
+	    elsif ($arg eq "css" || $arg =~ /^ie/)
+	    {
+	        open I, "<tpl/css.tpl";
+	        $filename .= ($arg =~ /^ie/ ? ".$arg" : "" ) . ".css";
+		$replacement = ($arg eq "ie6" ? "* html " : "") . "." . $filename_base . ($arg eq "ie7" ? "[class]" : "") ;
+	    }
+	
+     	    if (!-e $filename)
 	    {
 	        open O, ">$filename";
     	        while (<I>)
 	        {
-	            s/%block%/$block_replacement/g;
+	            s/%block%/$replacement/g;
 		    print O;
 	        }
 	        close O;
@@ -96,9 +120,7 @@ foreach $arg(@ARGV) {
 	     {
 	         print "$filename exists couldn't overwrite\n";
 	     }
-
 	}
-        print "$arg is filetype\n";
     }
 
 
