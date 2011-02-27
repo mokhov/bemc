@@ -24,7 +24,7 @@ $blocks_path = $tmp[0] . '/';
 
 # now $blocks_path has path to blocks folder
 
-my $b; my $e; my $m;
+my $b; my $e; my @m;
 my $current_folder;
 foreach $arg(@ARGV) {
 
@@ -33,6 +33,7 @@ foreach $arg(@ARGV) {
     {
 	$b = $arg;
         $e = "";
+	$#m = -1;
 
 	$current_folder = $blocks_path . $arg;
     }
@@ -43,6 +44,7 @@ foreach $arg(@ARGV) {
     {
         $e = $arg;
 	$e =~ s/__//;
+	$#m = -1;
 
 	$current_folder = $blocks_path . $b . '/' . $e;
     }
@@ -51,16 +53,33 @@ foreach $arg(@ARGV) {
     # hmmm... modifier?
     elsif ($arg =~ /^_\w+_\w+/)
     {
-	$m = $arg;
-	my @tmp = $m =~ /(_[^_]+)/;
+	$tmp = $arg;
+	@m = $tmp =~ /_([^_]+)_([^_]+)/;
 
-	$current_folder = $blocks_path . $b . '/' . ($e ? $e . '/': '') . $tmp[0]; 
+	$current_folder = $blocks_path . $b . '/' . ($e ? $e . '/': '') . "_" . $m[0]; 
     }
 
 
     # if else - than it is filetype
     else 
     {
+        if ($arg == "xsl")
+	{
+	    open I, "<tmp/xsl.tpl";
+
+	    my $filename = $current_folder . "/" . $b . ($e ? "__$e" : "") . ($#m > 0 ? "_$m[0]_$m[1]" : "") . ".xsl";
+	    my $block_replacement = "lego:" . $b . ($e ? "/lego:$e" : "") . ($#m > 0 ? "[\@$m[0]='$m[1]']" : "");
+	   
+	    open O, ">$filename";
+	    while (<I>)
+	    {
+	        s/%block%/$block_replacement/g;
+		print O;
+	    }
+	    close O;
+	    close I;
+
+	}
         print "$arg is filetype\n";
     }
 
