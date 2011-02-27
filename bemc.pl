@@ -63,21 +63,39 @@ foreach $arg(@ARGV) {
     # if else - than it is filetype
     else 
     {
-        if ($arg == "xsl")
-	{
-	    open I, "<tmp/xsl.tpl";
+        # filename base, also CSS selector
+	my $filename_base = $b . ($e ? "__$e" : "") . ($#m > 0 ? "_$m[0]_$m[1]" : ""); 
 
-	    my $filename = $current_folder . "/" . $b . ($e ? "__$e" : "") . ($#m > 0 ? "_$m[0]_$m[1]" : "") . ".xsl";
+        # if we need to delete file, it has - inside
+	if ($arg =~ /-\w+/)
+	{
+	   $arg =~ s/^-//;
+	   `rm -rf  $current_folder/$filename_base.$arg`;
+	}
+
+        # xsl file
+        elsif ($arg == "xsl")
+	{
+	    open I, "<tpl/xsl.tpl";
+
+	    my $filename = $current_folder . "/" . $filename_base . ".xsl";
 	    my $block_replacement = "lego:" . $b . ($e ? "/lego:$e" : "") . ($#m > 0 ? "[\@$m[0]='$m[1]']" : "");
-	   
-	    open O, ">$filename";
-	    while (<I>)
+            
+	    if (!-e $filename)
 	    {
-	        s/%block%/$block_replacement/g;
-		print O;
-	    }
-	    close O;
-	    close I;
+	        open O, ">$filename";
+    	        while (<I>)
+	        {
+	            s/%block%/$block_replacement/g;
+		    print O;
+	        }
+	        close O;
+	        close I;
+             }
+	     else
+	     {
+	         print "$filename exists couldn't overwrite\n";
+	     }
 
 	}
         print "$arg is filetype\n";
