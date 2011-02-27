@@ -74,7 +74,7 @@ foreach $arg(@ARGV) {
 	   $arg =~ s/^-//;
 	   my $ext = $arg =~ /^ie/ ? "$arg.css" : "$arg";
 	   `rm -rf  $current_folder/$filename_base.$ext`;
-	   print "deleting $current_folder/$filename_base.$ext\n";
+	   print "- $current_folder/$filename_base.$ext\n";
 	}
 
         else 
@@ -117,7 +117,7 @@ foreach $arg(@ARGV) {
 	        }
 	        close O;
 	        close I;
-		print "$filename created\n";
+		print "+ $filename\n";
              }
 	     else
 	     {
