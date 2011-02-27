@@ -8,6 +8,8 @@ use Cwd 'abs_path';
 my @path = split('/',abs_path($0));
 pop @path;
 
+my $tpl_path = join('/',@path) . "/tpl";
+
 my $blocks_path;
 my @tmp;
 
@@ -83,7 +85,7 @@ foreach $arg(@ARGV) {
             # xsl file
 	    if ($arg eq "xsl")
 	    {
-	        open I, "<tpl/xsl.tpl";
+	        open I, "<$tpl_path/xsl.tpl";
 
 	        $filename .= ".xsl";
 	        $replacement = "lego:" . $b . ($e ? "/lego:$e" : "") . ($#m > 0 ? "[\@$m[0]='$m[1]']" : "");
@@ -92,7 +94,7 @@ foreach $arg(@ARGV) {
 	    # js file
 	    elsif ($arg eq "js")
 	    {
-	        open I, "<tpl/js.tpl";
+	        open I, "<$tpl_path/js.tpl";
 	        $filename .= ".js";
 		$replacement = $filename_base;
 	    }
@@ -100,7 +102,7 @@ foreach $arg(@ARGV) {
 	    # css
 	    elsif ($arg eq "css" || $arg =~ /^ie/)
 	    {
-	        open I, "<tpl/css.tpl";
+	        open I, "<$tpl_path/css.tpl";
 	        $filename .= ($arg =~ /^ie/ ? ".$arg" : "" ) . ".css";
 		$replacement = ($arg eq "ie6" ? "* html " : "") . "." . $filename_base . ($arg eq "ie7" ? "[class]" : "") ;
 	    }
