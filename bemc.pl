@@ -117,6 +117,7 @@ foreach $arg(@ARGV) {
 	        }
 	        close O;
 	        close I;
+		print "$filename created\n";
              }
 	     else
 	     {
