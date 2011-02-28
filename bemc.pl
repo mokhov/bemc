@@ -4,9 +4,7 @@
 
 sub makepath {return join('/', @_)}
 
-use Cwd 'abs_path';
-my @path = split('/',abs_path($0));
-pop @path;
+my @path = split('/', `pwd`);
 
 my $tpl_path = join('/',@path) . "/tpl";
 
@@ -22,7 +20,6 @@ while ($#path >= 0)
 }
 
 $blocks_path = $tmp[0] . '/';
-
 
 # now $blocks_path has path to blocks folder
 
