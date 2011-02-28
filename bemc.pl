@@ -6,7 +6,10 @@ sub makepath {return join('/', @_)}
 
 my @path = split('/', `pwd`);
 
-my $tpl_path = join('/',@path) . "/tpl";
+use Cwd 'abs_path';
+my @tpl_path = split('/',abs_path($0));
+pop @tpl_path;
+my $tpl_path = join('/',@tpl_path) . "/tpl";
 
 my $blocks_path;
 my @tmp;
