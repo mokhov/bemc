@@ -28,10 +28,16 @@ $blocks_path = $tmp[0] . '/';
 
 my $b; my $e; my @m;
 my $current_folder;
+my $old_notation = 0;
+
 foreach $arg(@ARGV) {
+    if ($arg eq "--old")
+    {
+       $old_notation = 1;
+    }
 
     # is this a block
-    if ($arg =~ /^b-\w+/) 
+    elsif ($arg =~ /^b-\w+/) 
     {
 	$b = $arg;
         $e = "";
@@ -66,7 +72,7 @@ foreach $arg(@ARGV) {
     else 
     {
         # filename base, also CSS selector
-	my $filename_base = $b . ($e ? "__$e" : "") . ($#m > 0 ? "_$m[0]_$m[1]" : ""); 
+	my $filename_base = $b . ($e ? "__$e" : "") . ($#m > 0 ? ($old_notation ? "_$m[1]" : "_$m[0]_$m[1]") : ""); 
 
         # if we need to delete file, it has - inside
 	if ($arg =~ /-\w+/)
@@ -129,6 +135,6 @@ foreach $arg(@ARGV) {
 
 
     # if folder doen't exist - let's do it
-    `mkdir $current_folder` if (!-d $current_folder);
+    `mkdir $current_folder` if ($current_folder && !-d $current_folder);
 }
 
