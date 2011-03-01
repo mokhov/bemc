@@ -5,6 +5,7 @@
 sub makepath {return join('/', @_)}
 
 my @path = split('/', `pwd`);
+$path[$#path] =~ s/\n//;
 
 use Cwd 'abs_path';
 my @tpl_path = split('/',abs_path($0));
@@ -94,7 +95,7 @@ foreach $arg(@ARGV) {
 	        open I, "<$tpl_path/xsl.tpl";
 
 	        $filename .= ".xsl";
-	        $replacement = "lego:" . $b . ($e ? "/lego:$e" : "") . ($#m > 0 ? "[\@$m[0]='$m[1]']" : "");
+	        $replacement = "lego:" . $b . ($e ? "/lego:$e" : "") . ($#m > 0 ? "[\@lego:$m[0]='$m[1]']" : "");
 	    }
 
 	    # js file
